@@ -8,7 +8,9 @@
 1) ShopAPI:
 
 а) Создание сущностей для парсинга json-объекта:
-`@Data
+
+```
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Item {
@@ -30,23 +32,28 @@ public class Item {
     private String index;
     @JsonProperty("store_id")
     private String storeId;
-}`
+}
+```
 
-`@Data
+```
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Price {
     private String currency;
     private Long amount;
-}`
+}
+```
 
-`@Data
+```
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Stock {
     private Long available;
     private Long reserved;
-}`
+}
+```
 
 б) ShopController - рест-контроллер для получения новых товаров.
 в) ProductValidationService - сервис валидации цензуры новых товаров.
@@ -59,7 +66,8 @@ public class Stock {
 Протестим работу сервиса:
 а) Отправим леквидный json через пост-запрос на эндпоинт http://localhost:8081/products/send_new_item:
 
-`{
+```
+{
 "product_id": "test-003",
 "name": "товар",
 "description": "Обычное описание",
@@ -70,7 +78,8 @@ public class Stock {
 "sku": "TEST-001",
 "index": "products",
 "store_id": "store_test"
-}`
+}
+```
 
 Зайдем в PostMan и отправим post-запрос с соответствующим телом по указанномму юрлу:
 ![IMAGE 2025-09-30 12:50:18.jpg](screenshots/IMAGE%202025-09-30%2012%3A50%3A18.jpg)
@@ -111,15 +120,19 @@ a) Модели для сохранения информации по товар
 
 `2025-10-02T09:44:56.639+03:00  INFO 23224 --- [Client] [ntainer#0-0-C-1] c.e.Client.consumer.NewItemsConsumer     : Received: item Item(.....)`
 
-`Hibernate:
+```
+Hibernate:
 insert
 into
 items
 (amount, brand, category, created_at, currency, description, name, product_id, specifications, tags, updated_at)
 values
-(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+```
 
-`2025-10-02T09:44:56.805+03:00  INFO 23224 --- [Client] [ntainer#0-0-C-1] c.e.Client.services.NewItemsService      : Новый товар успешно сохранен в БД: ItemEntity(.....)`
+```
+2025-10-02T09:44:56.805+03:00  INFO 23224 --- [Client] [ntainer#0-0-C-1] c.e.Client.services.NewItemsService      : Новый товар успешно сохранен в БД: ItemEntity(.....)
+```
 
 В то же время таблица Items:
 ![IMAGE 2025-10-02 09:48:47.jpg](screenshots/IMAGE%202025-10-02%2009%3A48%3A47.jpg)
@@ -139,7 +152,7 @@ ________________________________________________________________________________
 
 
 
-!!!!!Правки 03.10 - 04.10!!!!!!
+## Правки 03.10 - 04.10
 1) Теперь в микросервисе Shop в классе ShopService.java асинхронная отправка сообщения в топик, убрал блокирующий метод .get()
 2) В микросервисе Client в классе NewItemsConsumer.java добавил обработку ошибок чтения из топика, информация о проблемных сообщениях теперь 
 отправляется в DLQ.
